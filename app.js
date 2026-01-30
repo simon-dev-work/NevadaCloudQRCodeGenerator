@@ -28,7 +28,6 @@ document.addEventListener("DOMContentLoaded", () => {
       utm_source: "nevadacloud",
       utm_medium: "qrcode",
       utm_campaign: hostname,
-      utm_content: path,
       utm_id: Date.now().toString(),
     };
 
