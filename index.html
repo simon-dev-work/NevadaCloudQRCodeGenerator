@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QR Code Generator</title>
+
+    <!-- Primary Meta Tags -->
+    <meta name="title" content="Nevada QR Code Generator" />
+    <meta
+      name="description"
+      content="Generate custom QR codes instantly. Customize colors, sizes, and download as PNG with transparency."
+    />
+    <meta
+      name="keywords"
+      content="QR code, QR generator, QR code creator, free QR code, download QR, transparent QR code"
+    />
+    <meta name="author" content="Simon Swart" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/cropped-fav.png" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:url"
+      content="https://qrcodegenerator-ruddy.vercel.app/"
+    />
+    <meta property="og:title" content="QR Code Generator" />
+    <meta
+      property="og:description"
+      content="Generate custom QR codes instantly. Customize colors, sizes, and download as PNG with transparency."
+    />
+    <meta property="og:image" content="" />
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <img src="assets/cropped-fav.png" alt="NevadaCloud logo"><h1></i> NevadaCloud QR Generator</h1>
+      </div>
+
+      <!-- The Output Area -->
+      <div class="qr-wrapper">
+        <!-- Transparency Grid Background -->
+        <div class="qrOutput transparency-grid" id="qrOutput">
+          <div class="placeholder-content">
+           <img src="assets/ncQRPlaceholder.png" alt="placeholder NevadaCloud">
+            <p>Enter URL to generate</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input Area -->
+      <div class="input-group">
+        <label for="urlInput">Content / URL</label>
+        <input
+          type="text"
+          id="urlInput"
+          placeholder="https://example.com"
+          autocomplete="off"
+        />
+      </div>
+
+      <!-- Controls Grid -->
+      <div class="controls-grid">
+        <!-- 1. Color Picker -->
+        <div class="control-card">
+          <label>QR Color</label>
+          <div class="color-picker-wrapper">
+            <input type="color" id="qrColor" value="#51a4db" />
+            <span id="qrColorValue">#51a4db</span>
+          </div>
+        </div>
+
+        <!-- 3. Radius Slider (0 to 50) -->
+        <div class="control-card full-width">
+          <div class="range-header">
+            <label>Radius</label>
+            <span id="radValue">0</span>
+            <!-- Reads 0 to 50 -->
+          </div>
+          <!-- Min 0, Max 50, Step 1 -->
+          <input
+            type="range"
+            id="rad"
+            name="radius"
+            min="0"
+            max="50"
+            step="1"
+            value="0"
+          />
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="action-buttons">
+        <button id="generateBtn" class="btn-primary">Generate QR</button>
+        <button id="downloadBtn" class="btn-secondary" disabled>
+          Download PNG
+        </button>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/qr-creator/dist/qr-creator.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
