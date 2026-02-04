@@ -5,12 +5,19 @@ document.addEventListener("DOMContentLoaded", () => {
   const qrContainer = document.getElementById("qrOutput");
 
   const qrColorInput = document.getElementById("qrColor");
+  const qrColorValue = document.getElementById("qrColorValue");
+
   const radiusInput = document.getElementById("rad");
   const radValueDisplay = document.getElementById("radValue");
 
   let hasGenerated = false;
+
   const size = 220;
   const padding = 10;
+
+  // keep UI honest on load
+  qrColorValue.textContent = qrColorInput.value;
+  radValueDisplay.textContent = radiusInput.value;
 
   const buildUtmUrl = (input) => {
     let url;
@@ -48,7 +55,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const text = buildUtmUrl(rawInput);
-
     qrContainer.innerHTML = "";
 
     const rawRadius = parseInt(radiusInput.value, 10);
@@ -60,12 +66,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     QrCreator.render(
       {
-        text: text,
+        text,
         radius: calculatedRadius,
         ecLevel: "H",
         fill: qrColorInput.value,
         background: null,
-        size: size,
+        size,
       },
       tempCanvas,
     );
@@ -73,9 +79,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const finalCanvas = document.createElement("canvas");
     finalCanvas.width = size + padding * 2;
     finalCanvas.height = size + padding * 2;
-    const ctx = finalCanvas.getContext("2d");
 
+    const ctx = finalCanvas.getContext("2d");
     ctx.drawImage(tempCanvas, padding, padding);
+
     qrContainer.appendChild(finalCanvas);
 
     hasGenerated = true;
@@ -94,6 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   qrColorInput.addEventListener("input", () => {
+    qrColorValue.textContent = qrColorInput.value;
     if (hasGenerated) generateQR();
   });
 

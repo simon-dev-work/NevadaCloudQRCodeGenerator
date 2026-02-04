@@ -31,7 +31,10 @@
       property="og:description"
       content="Generate custom QR codes instantly. Customize colors, sizes, and download as PNG with transparency."
     />
-    <meta property="og:image" content="https://nevadacloudqrgenerator.vercel.app/assets/ncQRMeta.png" />
+    <meta
+      property="og:image"
+      content="https://nevadacloudqrgenerator.vercel.app/assets/ncQRMeta.png"
+    />
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="style.css" />
@@ -39,25 +42,365 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+
+    <style>
+      :root {
+        --primary: #51a4db;
+        --primary-hover: #3b8bc4;
+        --ice-blue: #d4e8f5;
+        --frost: #e8f3fa;
+        --mountain-dark: #2e69b8;
+        --mountain-mid: #165db4;
+        --stone-gray: #156ccf;
+        --text-main: #2c3e50;
+        --text-muted: #64748b;
+        --border-light: #c7dce8;
+        --shadow-soft: 0 10px 40px rgba(74, 95, 122, 0.15);
+        --shadow-inset: inset 0 2px 8px rgba(0, 0, 0, 0.04);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family:
+          "Inter",
+          "Segoe UI",
+          -apple-system,
+          sans-serif;
+      }
+
+      body {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        position: relative;
+        overflow-x: hidden;
+        background: linear-gradient(-45deg, #51a4db, #51a4db);
+        background-size: 400% 400%;
+        animation: gradientShift 15s ease infinite;
+        transition: background 0.5s ease;
+      }
+
+      @keyframes gradientShift {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      .container {
+        background: linear-gradient(135deg, #ffffff 0%, #f5fbff 100%);
+        width: 100%;
+        max-width: 450px;
+        padding: 2rem;
+        border-radius: 20px;
+        box-shadow: var(--shadow-soft);
+        border: 2px solid rgba(199, 220, 232, 0.4);
+        position: relative;
+        z-index: 1;
+        backdrop-filter: blur(10px);
+      }
+
+      .container::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(
+          90deg,
+          transparent 0%,
+          rgba(212, 232, 245, 0.6) 20%,
+          rgba(168, 197, 218, 0.4) 50%,
+          rgba(212, 232, 245, 0.6) 80%,
+          transparent 100%
+        );
+        border-radius: 20px 20px 0 0;
+      }
+
+      .header {
+        background: white;
+        padding: 1rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 8px rgba(74, 95, 122, 0.08);
+        border: 1px solid var(--border-light);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.3rem;
+      }
+
+      .header img {
+        width: 28px;
+        height: 28px;
+        object-fit: contain;
+        filter: drop-shadow(0 2px 4px rgba(81, 164, 219, 0.3));
+      }
+
+      .header h1 {
+        color: var(--primary);
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+        letter-spacing: -0.02em;
+      }
+
+      .qr-wrapper {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .qrOutput {
+        width: 260px;
+        height: 260px;
+        border: 3px solid var(--ice-blue);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        background: white;
+        box-shadow:
+          var(--shadow-inset),
+          0 4px 12px rgba(74, 95, 122, 0.1);
+        position: relative;
+      }
+
+      .qrOutput canvas {
+        display: block;
+        max-width: 100%;
+      }
+
+      .placeholder-content {
+        text-align: center;
+        color: var(--stone-gray);
+      }
+
+      .placeholder-content img {
+        width: 5rem;
+        margin-bottom: 0.5rem;
+        opacity: 0.4;
+      }
+
+      .input-group {
+        margin-bottom: 1.25rem;
+      }
+
+      .input-group label,
+      .control-card label {
+        display: block;
+        font-weight: 600;
+        color: var(--mountain-dark);
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-size: 0.75rem;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 2px solid var(--border-light);
+        border-radius: 10px;
+        outline: none;
+        transition: all 0.2s ease;
+        font-size: 0.95rem;
+        background: white;
+        color: var(--text-main);
+      }
+
+      input[type="text"]:focus {
+        border-color: var(--primary);
+        background: white;
+        box-shadow: 0 0 0 4px rgba(81, 164, 219, 0.1);
+      }
+
+      .controls-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .control-card {
+        background: linear-gradient(135deg, var(--frost) 0%, white 100%);
+        padding: 0.9rem;
+        border-radius: 12px;
+        border: 1px solid var(--border-light);
+        box-shadow: var(--shadow-inset);
+      }
+
+      .control-card.full-width {
+        grid-column: span 1;
+      }
+
+      .color-picker-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      input[type="color"] {
+        -webkit-appearance: none;
+        width: 36px;
+        height: 36px;
+        border: 3px solid white;
+        border-radius: 50%;
+        cursor: pointer;
+        overflow: hidden;
+        padding: 0;
+        box-shadow:
+          0 3px 8px rgba(74, 95, 122, 0.2),
+          inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        transition: all 0.2s ease;
+      }
+
+      input[type="color"]::-webkit-color-swatch-wrapper {
+        padding: 0;
+      }
+      input[type="color"]::-webkit-color-swatch {
+        border: none;
+        border-radius: 50%;
+      }
+
+      /* Glow when active */
+      input[type="color"]:focus,
+      input[type="color"]:active {
+        transform: scale(1.15);
+        box-shadow:
+          0 0 0 4px rgba(81, 164, 219, 0.35),
+          0 0 12px rgba(81, 164, 219, 0.5);
+      }
+
+      .color-picker-wrapper span {
+        font-size: 0.8rem;
+        font-family: "Courier New", monospace;
+        color: var(--mountain-mid);
+        font-weight: 600;
+      }
+
+      .range-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+      }
+
+      input[type="range"] {
+        width: 100%;
+        height: 8px;
+        background: linear-gradient(
+          to right,
+          var(--ice-blue),
+          var(--border-light)
+        );
+        border-radius: 4px;
+        outline: none;
+        -webkit-appearance: none;
+        cursor: pointer;
+        box-shadow: var(--shadow-inset);
+      }
+
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 20px;
+        height: 20px;
+        background: linear-gradient(135deg, white, var(--ice-blue));
+        border: 3px solid var(--primary);
+        border-radius: 50%;
+        box-shadow: 0 3px 8px rgba(74, 95, 122, 0.3);
+        transition: transform 0.15s ease;
+      }
+
+      input[type="range"]::-webkit-slider-thumb:hover {
+        transform: scale(1.15);
+        box-shadow: 0 4px 12px rgba(81, 164, 219, 0.4);
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 1rem;
+      }
+
+      button {
+        flex: 1;
+        padding: 0.9rem;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        font-size: 0.95rem;
+        letter-spacing: 0.01em;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--primary) 0%, #3b8bc4 100%);
+        color: white;
+        box-shadow: 0 4px 12px rgba(81, 164, 219, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(
+          135deg,
+          var(--primary-hover) 0%,
+          #2a6fa3 100%
+        );
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(81, 164, 219, 0.4);
+      }
+
+      .btn-secondary {
+        background: white;
+        border: 2px solid var(--border-light);
+        color: var(--mountain-dark);
+        box-shadow: 0 2px 6px rgba(74, 95, 122, 0.1);
+      }
+
+      .btn-secondary:hover:not(:disabled) {
+        background: var(--frost);
+        border-color: var(--primary);
+        transform: translateY(-1px);
+      }
+
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none !important;
+      }
+    </style>
   </head>
   <body>
     <div class="container">
       <div class="header">
-        <img src="assets/cropped-fav.png" alt="NevadaCloud logo"><h1></i> NevadaCloud QR Generator</h1>
+        <img src="assets/cropped-fav.png" alt="NevadaCloud logo" />
+        <h1>NevadaCloud QR Generator</h1>
       </div>
 
-      <!-- The Output Area -->
       <div class="qr-wrapper">
-        <!-- Transparency Grid Background -->
-        <div class="qrOutput transparency-grid" id="qrOutput">
+        <div class="qrOutput" id="qrOutput">
           <div class="placeholder-content">
-           <img src="assets/ncQRPlaceholder.png" alt="placeholder NevadaCloud">
+            <img
+              src="assets/ncQRPlaceholder.png"
+              alt="placeholder NevadaCloud"
+            />
             <p>Enter URL to generate</p>
           </div>
         </div>
       </div>
 
-      <!-- Input Area -->
       <div class="input-group">
         <label for="urlInput">Content / URL</label>
         <input
@@ -68,9 +411,7 @@
         />
       </div>
 
-      <!-- Controls Grid -->
       <div class="controls-grid">
-        <!-- 1. Color Picker -->
         <div class="control-card">
           <label>QR Color</label>
           <div class="color-picker-wrapper">
@@ -79,14 +420,11 @@
           </div>
         </div>
 
-        <!-- 3. Radius Slider (0 to 50) -->
         <div class="control-card full-width">
           <div class="range-header">
             <label>Radius</label>
             <span id="radValue">0</span>
-            <!-- Reads 0 to 50 -->
           </div>
-          <!-- Min 0, Max 50, Step 1 -->
           <input
             type="range"
             id="rad"
@@ -99,7 +437,6 @@
         </div>
       </div>
 
-      <!-- Actions -->
       <div class="action-buttons">
         <button id="generateBtn" class="btn-primary">Generate QR</button>
         <button id="downloadBtn" class="btn-secondary" disabled>
@@ -109,6 +446,118 @@
     </div>
 
     <script src="https://unpkg.com/qr-creator/dist/qr-creator.min.js"></script>
-    <script src="app.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const urlInput = document.getElementById("urlInput");
+        const generateBtn = document.getElementById("generateBtn");
+        const downloadBtn = document.getElementById("downloadBtn");
+        const qrContainer = document.getElementById("qrOutput");
+
+        const qrColorInput = document.getElementById("qrColor");
+        const qrColorValue = document.getElementById("qrColorValue");
+        const radiusInput = document.getElementById("rad");
+        const radValueDisplay = document.getElementById("radValue");
+        const body = document.body;
+
+        let hasGenerated = false;
+        const size = 220;
+        const padding = 10;
+
+        qrColorValue.textContent = qrColorInput.value;
+        radValueDisplay.textContent = radiusInput.value;
+
+        const buildUtmUrl = (input) => {
+          let url;
+          try {
+            url = new URL(input);
+          } catch {
+            return input;
+          }
+          const hostname = url.hostname.replace("www.", "");
+          const path =
+            url.pathname.split("/").filter(Boolean).join("-") || "root";
+          const utmParams = {
+            utm_source: "nevadacloud",
+            utm_medium: "qrcode",
+            utm_campaign: hostname,
+            utm_id: Date.now().toString(),
+          };
+          Object.entries(utmParams).forEach(([key, value]) => {
+            if (!url.searchParams.has(key)) url.searchParams.set(key, value);
+          });
+          return url.toString();
+        };
+
+        const updateBackgroundGradient = (color) => {
+          body.style.background = `linear-gradient(-45deg, #51a4db, ${color}, #51a4db, ${color})`;
+          body.style.backgroundSize = "400% 400%";
+          body.style.animation = "gradientShift 15s ease infinite";
+        };
+
+        // initialize background
+        updateBackgroundGradient(qrColorInput.value);
+
+        const generateQR = () => {
+          const rawInput = urlInput.value.trim();
+          if (!rawInput) {
+            alert("Enter a URL or text first");
+            return;
+          }
+          const text = buildUtmUrl(rawInput);
+          qrContainer.innerHTML = "";
+          const rawRadius = parseInt(radiusInput.value, 10);
+          const calculatedRadius = rawRadius / 100;
+
+          const tempCanvas = document.createElement("canvas");
+          tempCanvas.width = size;
+          tempCanvas.height = size;
+
+          QrCreator.render(
+            {
+              text,
+              radius: calculatedRadius,
+              ecLevel: "H",
+              fill: qrColorInput.value,
+              background: null,
+              size,
+            },
+            tempCanvas,
+          );
+
+          const finalCanvas = document.createElement("canvas");
+          finalCanvas.width = size + padding * 2;
+          finalCanvas.height = size + padding * 2;
+          finalCanvas.getContext("2d").drawImage(tempCanvas, padding, padding);
+          qrContainer.appendChild(finalCanvas);
+
+          hasGenerated = true;
+          downloadBtn.removeAttribute("disabled");
+        };
+
+        generateBtn.addEventListener("click", generateQR);
+        urlInput.addEventListener("keypress", (e) => {
+          if (e.key === "Enter") generateQR();
+        });
+        radiusInput.addEventListener("input", (e) => {
+          radValueDisplay.textContent = e.target.value;
+          if (hasGenerated) generateQR();
+        });
+
+        qrColorInput.addEventListener("input", () => {
+          qrColorValue.textContent = qrColorInput.value;
+          updateBackgroundGradient(qrColorInput.value);
+          if (hasGenerated) generateQR();
+        });
+
+        downloadBtn.addEventListener("click", () => {
+          const canvas = qrContainer.querySelector("canvas");
+          if (!canvas) return;
+          const link = document.createElement("a");
+          link.download = `qr-code-${Date.now()}.png`;
+          link.href = canvas.toDataURL("image/png");
+          link.click();
+        });
+      });
+    </script>
   </body>
 </html>
