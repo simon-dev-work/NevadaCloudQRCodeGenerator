@@ -3,10 +3,9 @@
   --primary-hover: #3b8bc4;
   --ice-blue: #d4e8f5;
   --frost: #e8f3fa;
-  --snow: #f5fbff;
-  --mountain-dark: #4a5f7a;
-  --mountain-mid: #6b8099;
-  --stone-gray: #7a8b9e;
+  --mountain-dark: #2e69b8;
+  --mountain-mid: #165db4;
+  --stone-gray: #156ccf;
   --text-main: #2c3e50;
   --text-muted: #64748b;
   --border-light: #c7dce8;
@@ -26,7 +25,9 @@
 }
 
 body {
-  background: linear-gradient(to bottom, #a8c5da 0%, #dae9f3 40%, #f0f6fa 100%);
+  background: linear-gradient(-45deg, #51a4db, #3b8bc4, #2e69b8, #165db4);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -36,53 +37,15 @@ body {
   overflow-x: hidden;
 }
 
-/* Mountain Peak Decoration */
-body::before {
-  content: "";
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 35vh;
-  background: linear-gradient(to top, #8fa8bd 0%, transparent 100%);
-  pointer-events: none;
-  z-index: 0;
-  clip-path: polygon(
-    0% 100%,
-    8% 60%,
-    18% 75%,
-    28% 50%,
-    40% 70%,
-    52% 45%,
-    65% 65%,
-    78% 55%,
-    88% 75%,
-    100% 60%,
-    100% 100%
-  );
-  opacity: 0.4;
-}
-
-/* Snowflake decorations */
-body::after {
-  content: "❄";
-  position: fixed;
-  top: 10%;
-  right: 15%;
-  font-size: 2.5rem;
-  color: rgba(255, 255, 255, 0.3);
-  animation: float 6s ease-in-out infinite;
-  pointer-events: none;
-  z-index: 0;
-}
-
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0) rotate(0deg);
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
   }
   50% {
-    transform: translateY(-20px) rotate(180deg);
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
   }
 }
 
@@ -257,7 +220,7 @@ input[type="text"] {
   outline: none;
   transition: all 0.2s ease;
   font-size: 0.95rem;
-  background: var(--snow);
+  background: white;
   color: var(--text-main);
 }
 
@@ -276,7 +239,7 @@ input[type="text"]:focus {
 }
 
 .control-card {
-  background: linear-gradient(135deg, var(--frost) 0%, var(--snow) 100%);
+  background: linear-gradient(135deg, var(--frost) 0%, white 100%);
   padding: 0.9rem;
   border-radius: 12px;
   border: 1px solid var(--border-light);
@@ -311,6 +274,7 @@ input[type="color"] {
 input[type="color"]::-webkit-color-swatch-wrapper {
   padding: 0;
 }
+
 input[type="color"]::-webkit-color-swatch {
   border: none;
   border-radius: 50%;
