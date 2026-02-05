@@ -553,7 +553,7 @@
           const canvas = qrContainer.querySelector("canvas");
           if (!canvas) return;
           const link = document.createElement("a");
-          link.download = `qr-code-${Date.now()}.png`;
+          link.download = `NevadaCloud-QRCode-${Date.now()}.png`;
           link.href = canvas.toDataURL("image/png");
           link.click();
         });
